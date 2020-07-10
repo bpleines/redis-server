@@ -21,7 +21,7 @@ Role Variables
 | redis_config_file_path | String | /etc/redis/redis.conf | The filepath for the redis configuration file |
 | redis_log_file_path | String | /var/log/redis/redis.log | The filepath for the redis log file |
 | redis_maxmemory_percent | int | 80 | The percent of total server memory to allocate to redis cache. Explicitly setting this value avoids the redis server from OOM crashing and instead provides errors early when this memory threshold is reached |
-| redis_replication_backlog_size_percent | int | The percent of total server memory to allocate to the replication backlog. A larger replication backlog reduces potential for full synchronizations which can negatively affect performance |
+| redis_replication_backlog_size_percent | int | 80 | The percent of total server memory to allocate to the replication backlog. A larger replication backlog reduces potential for full synchronizations which can negatively affect performance |
 | redis_tcp_backlog | String | 511 | The size of the complete connection queue. Currently this size dictates the redis_tcp_backlog setting AND the unix somaxconn value |
 
 Dependencies
