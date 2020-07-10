@@ -1,0 +1,16 @@
+---
+# defaults file for redis-server
+################### INSTALLATION ####################
+redis_bind_address: 0.0.0.0
+redis_install_dir: /var/lib/redis
+redis_server_port: 6379
+redis_user: redis
+redis_version: 6.0.1
+systemd_path: "/lib/systemd/system"
+
+################### CONFIGURATION ####################
+redis_config_file_path: /etc/redis/redis.conf
+redis_log_file_path: /var/log/redis/redis.log
+redis_maxmemory_percent: 80
+redis_replication_backlog_size_percent: 5
+redis_tcp_backlog: "511"

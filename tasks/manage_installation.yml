@@ -1,0 +1,60 @@
+---
+- name: Manage redis user creation
+  user:
+    name: "{{ redis_user }}"
+    createhome: true
+    home: "{{ redis_install_dir }}"
+    state: present
+
+- name: Manage permissions on {{ redis_install_dir }}
+  file:
+    path: "{{ redis_install_dir }}"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: '0755'
+
+- name: Ensure redis configuration directory {{ redis_config_file_path | dirname }} exists
+  file:
+    path: "{{ redis_config_file_path | dirname }}"
+    state: directory
+
+- name: Ensure redis logging directory exists {{ redis_log_file_path | dirname }} exists
+  file:
+    path: "{{ redis_log_file_path | dirname }}"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+
+- name: Download redis-server source code version {{ redis_version }}
+  get_url:
+    url: http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
+    dest: "{{ redis_install_dir }}/redis-{{ redis_version }}.tar.gz"
+
+- name: "Extract redis-{{ redis_version }}.tar.gz into {{ redis_install_dir }}"
+  unarchive:
+    src: "{{ redis_install_dir }}/redis-{{ redis_version }}.tar.gz"
+    dest: "{{ redis_install_dir }}"
+    remote_src: true
+
+- name: Ensure redis source compilation and kernel management dependencies are present
+  apt:
+    name: make,build-essential,tcl8.5,sysfsutils
+    state: present
+
+- name: Check whether redis-server version {{ redis_version }} is installed
+  command: redis-server -v
+  register: redis_version_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Build redis from source using make
+  command: "{{ item }}"
+  args:
+    chdir: "{{ redis_install_dir }}/redis-{{ redis_version }}"
+  when: (redis_version_check is failed) or
+        (redis_version not in redis_version_check.stdout)
+  with_items:
+    - make
+    # make test ensures installation integrity, but is time intensive ~2 minutes 
+    #- make test
+    - make install

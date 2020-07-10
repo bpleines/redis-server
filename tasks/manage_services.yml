@@ -1,0 +1,14 @@
+---
+- name: Manage systemd redis-server service
+  template:
+    src: redis-server.service.j2
+    dest: "{{ systemd_path }}/redis-server.service"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure redis-server service is started and enabled on boot
+  service:
+    name: redis-server
+    state: started
+    enabled: true

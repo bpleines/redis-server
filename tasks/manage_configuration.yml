@@ -1,0 +1,31 @@
+---
+# Kernel adjustments made as recommended in https://redis.io/topics/admin
+- name: Ensure the Linux kernel overcommit memory setting is set to 1
+  sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    state: present
+  notify: Restart redis-server
+
+- name: Ensure somaxconn matches at least redis's default tcp backlog setting
+  sysctl:
+    name: net.core.somaxconn
+    value: "{{ redis_tcp_backlog }}"
+    state: present
+  notify: Restart redis-server
+
+- name: Disable Linux kernel feature transparent huge pages
+  lineinfile:
+    path: /etc/sysfs.conf
+    line: kernel/mm/transparent_hugepage/enabled = never
+  notify:
+    - Reboot instance
+    - Restart redis-server
+
+- name: Manage redis configuration file
+  template:
+    src: redis.conf.j2
+    dest: "{{ redis_config_file_path }}"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+  notify: Restart redis-server
