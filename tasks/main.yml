@@ -1,6 +1,6 @@
 ---
 # tasks file for redis-server
-- name: Manage redis installation tasks 
+- name: Manage redis installation tasks
   include_tasks: manage_installation.yml
 
 - name: Manage redis configuration tasks
