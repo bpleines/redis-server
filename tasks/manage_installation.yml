@@ -55,6 +55,6 @@
         (redis_version not in redis_version_check.stdout)
   with_items:
     - make
-    # make test ensures installation integrity, but is time intensive ~2 minutes 
-    #- make test
+    # make test ensures installation integrity, but is time intensive ~2 minutes
+    # - make test
     - make install
